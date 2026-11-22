@@ -8,7 +8,7 @@ class FakeMessages:
         self.calls = []
 
     def _role(self, system):
-        for name in ("PLANNER", "RETRIEVER", "REASONER", "VALIDATOR"):
+        for name in ("PLANNER", "RETRIEVER", "REASONER", "VALIDATOR", "TICKET"):
             if f"You are the {name} agent" in system:
                 return name.lower()
         return "other"

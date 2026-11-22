@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import logging
 import operator
-from typing import Annotated, Literal, TypedDict
+from typing import Annotated, Callable, Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
@@ -298,16 +298,30 @@ def build_graph(store: VectorStore, where: dict | None = None):
 
 
 def answer_question(store: VectorStore, question: str, history: list[dict] | None = None,
-                    where: dict | None = None, state_name: str | None = None) -> dict:
+                    where: dict | None = None, state_name: str | None = None,
+                    on_step: Callable[[dict], None] | None = None) -> dict:
     """Run the full agent graph. Never raises for model/API problems; returns status 'error' instead.
 
     `where` limits retrieval (for example to one state's laws plus the user's ticket).
+    `on_step` is called with each trace step as soon as its agent finishes (for live progress in the UI).
     """
     graph = build_graph(store, where)
+    inputs = {"question": question, "history": history or [], "trace": [], "queries_run": [],
+              "jurisdiction": state_name or ""}
     try:
-        result = graph.invoke({"question": question, "history": history or [], "trace": [], "queries_run": [],
-                               "jurisdiction": state_name or ""},
-                              {"recursion_limit": 25})
+        result = None
+        for mode, chunk in graph.stream(inputs, {"recursion_limit": 25}, stream_mode=["updates", "values"]):
+            if mode == "values":
+                result = chunk
+            elif on_step:
+                for update in chunk.values():
+                    for step in (update or {}).get("trace", []):
+                        try:
+                            on_step(step)
+                        except Exception:  # a display problem must never stop the answer
+                            log.exception("on_step callback failed")
+        if result is None:
+            raise RuntimeError("Agent graph produced no state")
     except llm.Refused:
         return {"status": "refused", "answer": "I can't help with that request.", "citations": [], "trace": []}
     except llm.LLMError as exc:

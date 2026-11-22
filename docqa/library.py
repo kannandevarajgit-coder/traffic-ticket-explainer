@@ -95,7 +95,11 @@ def index_state_library(store: VectorStore, state: str, laws_dir: Path | None = 
 def add_user_document(store: VectorStore, filename: str, data: bytes, state: str, session_id: str) -> int:
     """Index a user's own upload (their ticket, a notice from the court) for their session only."""
     meta = {"kind": "ticket", "state": state, "session": session_id}
-    sections = load_document(filename, data, meta)
+    return index_user_sections(store, load_document(filename, data, meta), session_id)
+
+
+def index_user_sections(store: VectorStore, sections: list, session_id: str) -> int:
+    """Index sections already loaded with ticket metadata (lets the caller also read their text)."""
     chunks = chunk_sections(sections)
     # Keep session uploads distinct from library files with the same name.
     for c in chunks:
