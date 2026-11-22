@@ -1,0 +1,14 @@
+violation_code,description,base_fine_usd,total_with_assessments_usd,points,correctable,traffic_school_eligible
+VC 22350,Unsafe speed for conditions,35,238,1,No,Yes
+VC 22356 (1-15 mph over),Exceeding posted limit by 1 to 15 mph,35,238,1,No,Yes
+VC 22356 (16-25 mph over),Exceeding posted limit by 16 to 25 mph,70,367,1,No,Yes
+VC 22356 (26+ mph over),Exceeding posted limit by 26 mph or more,100,490,2,No,No
+VC 21453(a),Failure to stop at a red light,100,490,1,No,Yes
+VC 21453(a) right turn,Rolling right turn on red without full stop,35,238,1,No,Yes
+VC 22450,Failure to stop at a stop sign,35,238,1,No,Yes
+VC 23123.5,Hand-held phone use while driving (first offense),20,162,1,No,Yes
+VC 27315,Seat belt not worn,20,162,0,No,No
+VC 5200,Missing license plate,10,25,0,Yes,No
+VC 24252,Broken tail light or required lamp,10,25,0,Yes,No
+VC 4000(a),Expired registration,25,25,0,Yes,No
+VC 40508,Failure to appear in court,300,300,2,No,No

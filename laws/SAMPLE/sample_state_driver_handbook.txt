@@ -1,0 +1,32 @@
+SAMPLE STATE DRIVER HANDBOOK (FICTIONAL DEMO DATA)
+This document is invented for testing the Traffic Ticket Explainer. It is not the law of any real state.
+
+Chapter 4. Speed Limits
+Section 4.1 Basic speed law. You must never drive faster than is safe for current conditions, regardless of the posted limit. Rain, fog, heavy traffic and road work all require slower speeds.
+Section 4.2 Posted limits. Unless a sign says otherwise, the limit is 25 mph in residential and business districts, 25 mph in school zones when children are present, 55 mph on two-lane highways, and 65 mph on divided highways.
+Section 4.3 Speeding violations are charged under Vehicle Code VC 22350 (unsafe speed for conditions) or VC 22356 (exceeding the posted maximum limit). The fine depends on how far over the limit you were; see the Sample State Fine Schedule.
+
+Chapter 5. Signals and Signs
+Section 5.1 Red light. A steady red light means stop at the limit line and remain stopped until the light turns green. Entering an intersection on a steady red light is a violation of VC 21453(a).
+Section 5.2 Right turn on red. After a full stop, you may turn right on red unless a sign prohibits it. Failing to stop fully before turning right on red is also charged under VC 21453(a), usually with a lower fine set by the court.
+Section 5.3 Stop signs. You must stop completely at the limit line or crosswalk. Rolling through a stop sign is a violation of VC 22450.
+
+Chapter 6. Phones and Distraction
+Section 6.1 Hand-held phones. Holding and operating a phone while driving is a violation of VC 23123.5. Hands-free use (voice commands, a mounted phone touched once to activate a function) is allowed for drivers 18 and older.
+Section 6.2 Drivers under 18 may not use a phone in any way while driving, even hands-free.
+
+Chapter 7. Seat Belts and Equipment
+Section 7.1 Seat belts. Every driver and passenger must wear a seat belt. A seat belt ticket is VC 27315. It does not add points to your driving record.
+Section 7.2 Equipment ("fix-it") tickets. A ticket for a broken tail light, missing mirror or expired registration is a correctable violation. If you repair the problem and have an officer or authorized inspector sign the proof of correction before the due date, the court usually dismisses the ticket after a small dismissal fee of $25.
+
+Chapter 9. What To Do When You Get a Ticket
+Section 9.1 Signing the ticket. Signing the citation is not an admission of guilt. It is only a promise to respond by the due date.
+Section 9.2 Your options. Before the due date printed on the ticket, you may (a) pay the fine, which counts as a conviction and adds any points to your record; (b) ask the court for traffic school if you are eligible; or (c) plead not guilty and request a trial, either in person or by written declaration (trial by written declaration).
+Section 9.3 Traffic school. Drivers may attend an approved traffic school once every 18 months to keep a 1-point violation confidential, so it does not count toward license suspension or appear to insurance companies. You still pay the full fine plus a school fee. Traffic school is not available for violations of 2 points, for commercial drivers, or for misdemeanors.
+Section 9.4 Missing the due date. If you do not respond by the due date, the court may add a civil assessment of up to $100, report a failure to appear (VC 40508) which adds 2 points, and notify the DMV, which can suspend your license until you appear.
+Section 9.5 Can't afford the fine? You may ask the court for an ability-to-pay review, a payment plan, or community service instead of payment.
+
+Chapter 10. Points and License Suspension
+Section 10.1 Each conviction adds points to your driving record. Most moving violations count 1 point. Reckless driving, DUI and hit-and-run count 2 points. Points stay on your record for 3 years (2-point violations stay for 7 to 10 years).
+Section 10.2 Negligent operator. Your license may be suspended if you get 4 points in 12 months, 6 points in 24 months, or 8 points in 36 months.
+Section 10.3 Insurance. Insurers can see convictions on your record and may raise your rates. Points kept confidential through traffic school are not shown to insurers.

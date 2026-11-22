@@ -1,0 +1,17 @@
+Vermont point assessment schedule, 23 V.S.A. section 2502
+UNOFFICIAL SUMMARY. Restated from the official page below on 2026-11-22, not copied word for word. Replace or supplement with the official document and verify at the source before relying on it.
+Source: https://legislature.vermont.gov/statutes/section/23/025/02502 (the legislature describes its online copy as unofficial)
+Section 2502 sets points only. It does not state suspension thresholds or durations.
+
+How points work in Vermont
+- Points are assessed on conviction of a moving violation.
+- A Superior Court judge or Judicial Bureau hearing officer may waive the points in the interests of justice (section 2501(b)).
+- 2 additional points are added when the violator is found at fault for a crash (section 2502(b)).
+
+Points by violation in Vermont
+- 2 points: most ordinary moving violations under sections 601 to 1132 (license, signal, lane use, railroad crossing and similar offenses), and speeding less than 10 mph over the state or local limit (sections 1003, 1007)
+- 3 points: speeding more than 10 mph over the limit; illegal passing on the left or right, limits on passing, passing in a no-passing zone, following too closely, improper driving on a divided highway (sections 1033 to 1040)
+- 4 points: failure to obey an enforcement officer (section 1012), authority of officers (section 1013), failure to yield to a pedestrian (section 1051), failure to yield to a blind person (section 1057), first offense of using a portable electronic device or texting in a work zone or school zone (sections 1095a(d)(2), 1095b(c)(2), 1099(c)(2))
+- 5 points: speeding more than 20 mph over the limit; failure to yield to emergency vehicles (section 1050); illegally passing a school bus (section 1075); second or later offense of device use or texting in a work or school zone
+- 8 points: speeding more than 30 mph over the limit (sections 1003, 1007, 1097)
+- 10 points: negligent operation (section 1091), operating without the owner's consent (section 1094), failing to stop when involved in a crash (section 1128), attempting to elude a police officer (section 1133)
