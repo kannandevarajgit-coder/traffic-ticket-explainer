@@ -196,6 +196,17 @@ The image downloads the embedding model at build time so the first question is f
    (see `.streamlit/secrets.toml.example`).
 4. Deploy. The app reads the key from Streamlit secrets.
 
+### Hugging Face Spaces (free public URL, Docker)
+
+1. At https://huggingface.co/new-space choose the **Docker** SDK (blank template) and **CPU basic** hardware.
+2. In the Space's *Settings > Variables and secrets*, add a **secret** named `ANTHROPIC_API_KEY`.
+3. Push this repository to the Space. The YAML header in `README.md` tells Spaces to build the
+   `Dockerfile` and serve port 8501. PDFs and Excel files are stored with Git LFS (see `.gitattributes`),
+   which Spaces requires for files over 10 MB.
+
+The Dockerfile runs as a non-root user and turns off Streamlit's XSRF check, because Spaces shows the app
+inside an iframe where that check blocks file uploads.
+
 Note: Community Cloud storage is temporary, so the law library is re-indexed from `laws/` after each
 restart. User uploads are not kept between restarts, which suits this app.
 

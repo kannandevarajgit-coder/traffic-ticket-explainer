@@ -1,3 +1,14 @@
+---
+title: Traffic Ticket Explainer
+emoji: 🚦
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 8501
+pinned: false
+short_description: Explains traffic tickets in plain English with cited sources
+---
+
 # Traffic Ticket Explainer
 
 An AI agent app that explains traffic tickets in plain English. Pick where you got the ticket
