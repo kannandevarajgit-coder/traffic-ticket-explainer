@@ -1,0 +1,12 @@
+SAMPLE STATE NOTICE TO APPEAR  (FICTIONAL DEMO TICKET)
+Citation No. S-0051388
+Date of violation: 11/02/2026   Time: 17:15
+Driver: Alex Example   License: SAMPLE D7654321
+Location: Harbor Blvd & 9th St, Sample City
+
+Violation 1: VC 21453(a)   Failure to stop at a red light (camera-verified)
+Violation 2: VC 27315      Driver not wearing seat belt
+
+Court: Sample County Traffic Court, 100 Court Plaza, Sample City
+Respond on or before: 01/15/2027
+Signing this notice is not an admission of guilt.

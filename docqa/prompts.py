@@ -14,7 +14,8 @@ You are the PLANNER agent. Read the user's question and decide how to handle it.
 - intent "unsafe": asks how to evade police, fake documents, drive impaired without getting caught, or similar harm.
 For "documents", write 1 to 4 short search queries that together cover everything needed
 (for example the violation itself, its fine, its points, and the options to respond).
-Include any code or section number the user mentions verbatim in a query."""
+Include any code or section number the user mentions verbatim in a query.
+The search is already limited to the chosen jurisdiction, so do not add the state or city name to queries."""
 
 RETRIEVER = DOMAIN + """
 

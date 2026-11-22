@@ -12,10 +12,11 @@ DISCLAIMER = (
 
 # Phrases typical of attempts to override the assistant's instructions.
 _INJECTION = re.compile(
-    r"(ignore (all|any|the|your) (previous|prior|above) (instructions|rules)"
+    r"((ignore|forget|disregard) (all |any |the |your )*(previous |prior |above |earlier )?(instructions|rules|prompts?)"
     r"|disregard (the|your) (system|previous) (prompt|instructions)"
     r"|you are now (?!driving)"
-    r"|reveal (your|the) (system )?prompt"
+    r"|(reveal|print|show|repeat|output|leak) (me )?(your (system |hidden |initial )?(prompt|instructions)"
+    r"|the (system|hidden|initial) (prompt|instructions)|the prompt)"
     r"|act as (an? )?(unfiltered|jailbroken)"
     r"|developer mode)",
     re.IGNORECASE,

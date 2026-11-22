@@ -79,6 +79,10 @@ def _wrap_errors(fn):
         except anthropic.RateLimitError as exc:
             raise LLMError("Rate limited by the Anthropic API. Wait a minute and try again.") from exc
         except anthropic.BadRequestError as exc:
+            if "credit balance" in str(exc.message).lower():
+                log.error("Anthropic API credit exhausted")
+                raise LLMError("The app's AI credit has run out, so it can't answer right now. "
+                               "Please try again later.") from exc
             raise LLMError(f"The request was rejected by the API: {exc.message}") from exc
         except anthropic.APIStatusError as exc:
             raise LLMError(f"The Anthropic API returned an error ({exc.status_code}). Try again.") from exc

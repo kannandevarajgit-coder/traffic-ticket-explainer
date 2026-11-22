@@ -36,14 +36,35 @@ def script():
     }
 
 
+def test_access_code_gate(isolated_data, monkeypatch):
+    monkeypatch.setenv("DOCQA_ACCESS_CODE", "letmein")
+    at = AppTest.from_file(APP, default_timeout=60).run()
+    assert not at.exception
+    assert not at.pills  # nothing else renders behind the gate
+    at.text_input(key="access_code_input").input("wrong").run()
+    assert at.error and "isn't right" in at.error[0].value
+    at.text_input(key="access_code_input").input("letmein").run()
+    assert not at.error and at.pills
+
+
+def test_per_visit_limit_stops_ai_calls(isolated_data, monkeypatch):
+    monkeypatch.setenv("DOCQA_MAX_QUESTIONS_PER_SESSION", "1")
+    client = FakeClient(script())
+    llm.set_client(client)
+    at = AppTest.from_file(APP, default_timeout=120).run()
+    at.button(key="sample_sample_ticket.pdf").click().run()  # uses the one allowed request
+    at.chat_input[0].set_value("How much is speeding?").run()
+    assert any("limit" in w.value for w in at.warning)
+    assert [r for r, _ in client.calls] == ["ticket"]  # the question never reached Claude
+
+
 def test_full_flow_sample_ticket_to_cited_answer(isolated_data):
     llm.set_client(FakeClient(script()))
     at = AppTest.from_file(APP, default_timeout=120).run()
     assert not at.exception
     assert at.chat_input[0].disabled  # nothing works until a state is chosen
 
-    sample =next(b for b in at.button if "sample" in b.label.lower())
-    sample.click().run()
+    at.button(key="sample_sample_ticket.pdf").click().run()
     assert not at.exception
     assert any("Your ticket" in m.value for m in at.markdown)
     assert any(b.label == "Explain my ticket" for b in at.button)

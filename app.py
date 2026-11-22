@@ -1,6 +1,7 @@
 """Traffic Ticket Explainer: Streamlit front end for the agentic document Q&A system."""
 from __future__ import annotations
 
+import hmac
 import html
 import json
 import logging
@@ -30,6 +31,7 @@ from docqa.library import (
 )
 from docqa.llm import LLMError
 from docqa.store import VectorStore
+from docqa.usage import DailyLimit
 from docqa.ticket import TicketInfo, calendar_file, days_left, deadline_label, extract_ticket, parse_date
 
 logging.basicConfig(level=logging.INFO)
@@ -43,7 +45,28 @@ try:
 except Exception:
     pass
 
-SAMPLE_TICKET = Path(__file__).parent / "sample_docs" / "sample_ticket.pdf"
+
+def secret(name: str, default: str = "") -> str:
+    """A setting from Streamlit secrets (Cloud) or the environment / .env (local)."""
+    try:
+        if name in st.secrets:
+            return str(st.secrets[name])
+    except Exception:
+        pass
+    return os.getenv(name, default)
+
+
+ACCESS_CODE = secret("DOCQA_ACCESS_CODE").strip()
+MAX_PER_DAY = int(secret("DOCQA_MAX_QUESTIONS_PER_DAY", "150") or 0)
+MAX_PER_SESSION = int(secret("DOCQA_MAX_QUESTIONS_PER_SESSION", "25") or 0)
+
+SAMPLE_DIR = Path(__file__).parent / "sample_docs"
+SAMPLE_TICKETS = {  # file -> menu label; one per supported format so every loader can be tried
+    "sample_ticket.pdf": "PDF · speeding and phone use",
+    "sample_ticket_red_light.txt": "Text · red light and seat belt",
+    "sample_ticket_stop_sign.csv": "CSV · stop sign and expired registration",
+    "sample_ticket_fix_it.xlsx": "Excel · fix-it ticket, due in days",
+}
 SHORT_LABELS = {"CA": "California", "NJ": "New Jersey", "NY": "New York State", "NYC": "New York City",
                 "VT": "Vermont", "SAMPLE": "🧪 Sample State"}
 AGENT_ICONS = {"Guardrail": "🛡️", "Planner": "🧭", "Retriever": "🔎", "Reasoner": "✍️",
@@ -111,6 +134,11 @@ def get_store() -> VectorStore:
     return VectorStore()
 
 
+@st.cache_resource
+def get_daily_limit() -> DailyLimit:
+    return DailyLimit(settings.data_dir / "usage.json", MAX_PER_DAY)
+
+
 @st.cache_resource(show_spinner=False)
 def ensure_library(state: str, _version: int) -> dict:
     return index_state_library(get_store(), state)
@@ -125,6 +153,8 @@ ss.setdefault("lib_version", 0)
 ss.setdefault("ticket", None)
 ss.setdefault("ticket_name", "")
 ss.setdefault("uploader_key", 0)
+ss.setdefault("ai_requests", 0)
+ss.setdefault("unlocked", not ACCESS_CODE)
 
 
 # ---------- helpers ----------
@@ -138,9 +168,9 @@ def ask(question: str) -> None:
     ss.pending = question
 
 
-def use_sample() -> None:
+def use_sample(name: str) -> None:
     ss.state = SAMPLE
-    ss.load_sample = True
+    ss.load_sample = name
 
 
 def new_conversation() -> None:
@@ -157,7 +187,28 @@ def has_laws(code: str, with_library: list[str]) -> bool:
     return any(j in with_library for j in jurisdiction_chain(code))
 
 
+def allow_ai() -> bool:
+    """Count one AI request against this visitor's and today's limits; explain if over."""
+    if MAX_PER_SESSION and ss.ai_requests >= MAX_PER_SESSION:
+        st.warning(f"You've reached this demo's limit of {MAX_PER_SESSION} AI requests per visit. "
+                   "Open the app in a new tab later to continue.", icon=":material/hourglass_disabled:")
+        return False
+    if not get_daily_limit().try_use():
+        st.warning("This free demo has reached today's limit of AI requests. Please try again tomorrow.",
+                   icon=":material/hourglass_disabled:")
+        return False
+    ss.ai_requests += 1
+    return True
+
+
+def unlock() -> None:
+    ss.unlocked = hmac.compare_digest(ss.get("access_code_input", "").strip(), ACCESS_CODE)
+    ss.access_code_failed = not ss.unlocked
+
+
 def add_ticket(name: str, data: bytes, state: str) -> None:
+    if not allow_ai():  # reading a photo and the summary card both use Claude
+        return
     meta = {"kind": "ticket", "state": state, "session": ss.session_id}
     try:
         with st.spinner(f"Reading {name}…"):
@@ -332,6 +383,18 @@ st.html(CSS)
 render_hero(slim=bool(ss.messages))
 st.space("small")
 
+if not ss.unlocked:
+    _, gate, _ = st.columns([1, 1.6, 1])
+    with gate.container(border=True):
+        st.markdown("**🔑 Enter the access code**")
+        st.caption("This demo is shared privately to keep API costs under control.")
+        st.text_input("Access code", type="password", key="access_code_input", on_change=unlock,
+                      label_visibility="collapsed", placeholder="Access code")
+        st.button("Continue", type="primary", on_click=unlock, width="stretch")
+        if ss.get("access_code_failed"):
+            st.error("That code isn't right. Check the message you were sent.")
+    st.stop()
+
 with_library = library_states()
 setup_left, setup_right = st.columns([1.15, 1], gap="medium")
 with setup_left.container(border=True):
@@ -364,13 +427,17 @@ with setup_right.container(border=True):
     if upload and state and upload.file_id not in ss.uploads:
         ss.uploads.append(upload.file_id)
         add_ticket(upload.name, upload.getvalue(), state)
-    if not ss.ticket_name:
-        st.button("No ticket handy? Try a sample", icon=":material/science:", type="tertiary", on_click=use_sample)
+    with st.popover("No ticket handy? Try a sample", icon=":material/science:"):
+        st.caption("Fictional Sample State tickets, one in each file type.")
+        for name, label in SAMPLE_TICKETS.items():
+            st.button(label, key=f"sample_{name}", on_click=use_sample, args=(name,), width="stretch")
     st.caption(":material/lock: Only you can see your upload. Remove it any time from the sidebar.")
 
-if ss.pop("load_sample", False) and SAMPLE_TICKET.exists() and "sample" not in ss.uploads:
-    ss.uploads.append("sample")
-    add_ticket(SAMPLE_TICKET.name, SAMPLE_TICKET.read_bytes(), SAMPLE)
+sample_name = ss.pop("load_sample", None)
+if sample_name in SAMPLE_TICKETS and (SAMPLE_DIR / sample_name).exists():
+    if sample_name not in ss.uploads:
+        ss.uploads.append(sample_name)
+    add_ticket(sample_name, (SAMPLE_DIR / sample_name).read_bytes(), SAMPLE)
 
 if ss.ticket:
     render_ticket(ss.ticket)
@@ -391,7 +458,7 @@ for i, m in enumerate(ss.messages):
             render_result(m["result"], i, ss.messages[i - 1]["content"] if i else "", m.get("state", ""),
                           last=i == len(ss.messages) - 1)
 
-if question and state:
+if question and state and allow_ai():
     where = state_label(state)
     with st.chat_message("user", avatar=":material/person:"):
         st.markdown(md(question))

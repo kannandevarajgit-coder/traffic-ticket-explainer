@@ -192,9 +192,25 @@ def _where(state: State) -> str:
 
 
 def _ranked(hits: dict) -> list[dict]:
-    """Best passages first; cap context to keep cost and noise down."""
-    items = sorted(hits.values(), key=lambda h: h["distance"])
-    return items[: max(settings.top_k * 2, 8)]
+    """Best passages first; cap context to keep cost and noise down.
+
+    No single document may fill more than two thirds of the slots, so a 200-page manual cannot crowd out
+    a short, precise source such as a points table (found by the evaluation: NJ red-light camera points).
+    """
+    limit = max(settings.top_k * 2, 8)
+    per_source = max(limit * 2 // 3, 1)
+    picked, overflow, counts = [], [], {}
+    for h in sorted(hits.values(), key=lambda h: h["distance"]):
+        source = h["metadata"].get("source")
+        if counts.get(source, 0) < per_source:
+            picked.append(h)
+            counts[source] = counts.get(source, 0) + 1
+        else:
+            overflow.append(h)
+        if len(picked) == limit:
+            break
+    picked += overflow[: limit - len(picked)]
+    return sorted(picked, key=lambda h: h["distance"])
 
 
 def _context_block(passages: list[dict]) -> str:

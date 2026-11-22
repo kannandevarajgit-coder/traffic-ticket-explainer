@@ -124,6 +124,25 @@ def test_api_error_is_reported_not_raised(sample_store):
     assert res["status"] == "error" and "Anthropic API" in res["answer"]
 
 
+def test_out_of_credit_gives_friendly_message(sample_store):
+    import anthropic
+    import httpx2
+
+    class Broke:
+        def __init__(self):
+            self.beta = NS(messages=NS(parse=self.fail, create=self.fail))
+
+        def fail(self, **kw):
+            response = httpx2.Response(400, request=httpx2.Request("POST", "https://api.anthropic.com/v1/messages"))
+            raise anthropic.BadRequestError("Your credit balance is too low to access the Anthropic API.",
+                                            response=response, body=None)
+
+    llm.set_client(Broke())
+    res = answer_question(sample_store, "red light?", where=scope_filter("SAMPLE", None))
+    assert res["status"] == "error"
+    assert "credit has run out" in res["answer"] and "Error code" not in res["answer"]
+
+
 def test_missing_api_key_gives_clear_message(sample_store, monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
