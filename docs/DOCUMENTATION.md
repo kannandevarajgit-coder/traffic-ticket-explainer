@@ -201,8 +201,8 @@ The image downloads the embedding model at build time so the first question is f
 1. At https://huggingface.co/new-space choose the **Docker** SDK (blank template) and **CPU basic** hardware.
 2. In the Space's *Settings > Variables and secrets*, add a **secret** named `ANTHROPIC_API_KEY`.
 3. Push this repository to the Space. The YAML header in `README.md` tells Spaces to build the
-   `Dockerfile` and serve port 8501. PDFs and Excel files are stored with Git LFS (see `.gitattributes`),
-   which Spaces requires for files over 10 MB.
+   `Dockerfile` and serve port 8501. Spaces requires Git LFS for files over 10 MB, so first run
+   `git lfs migrate import --include="*.pdf,*.xlsx" --everything` (the GitHub copy stores them as normal files).
 
 The Dockerfile runs as a non-root user and turns off Streamlit's XSRF check, because Spaces shows the app
 inside an iframe where that check blocks file uploads.
